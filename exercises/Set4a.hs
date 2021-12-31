@@ -38,7 +38,7 @@ allEqual :: Eq a => [a] -> Bool
 allEqual [] = True
 allEqual (x:xs) = go x xs
   where go x [] = True
-        go x (y:ys) = if x == y then go x (ys) else False 
+        go x (y:ys) = if x == y then go x (ys) else False
 
 ------------------------------------------------------------------------------
 -- Ex 2: implement the function distinct which returns True if all
@@ -84,7 +84,8 @@ middle a b c = sort [a, b, c] !! 1
 --   rangeOf [1.5,1.0,1.1,1.2]  ==> 0.5
 
 rangeOf :: (Num a, Ord a) => [a] -> a
-rangeOf xs = (last (sort xs)) - (head (sort xs))
+rangeOf xs = let xsSorted = sort xs
+             in last xsSorted - head xsSorted
 
 ------------------------------------------------------------------------------
 -- Ex 5: given a (non-empty) list of (non-empty) lists, return the longest
@@ -126,7 +127,7 @@ longestListWithSmallestFirstElement x y
 --   incrementKey 'a' [('a',3.4)] ==> [('a',4.4)]
 
 incrementKey :: (Num v, Eq k) => k -> [(k,v)] -> [(k,v)]
-incrementKey k kvs = map (\x -> if fst x == k then (fst x, (snd x)+1) else (fst x, snd x)) kvs 
+incrementKey k kvs = map (\x -> if fst x == k then (fst x, (snd x)+1) else (fst x, snd x)) kvs
 
 ------------------------------------------------------------------------------
 -- Ex 7: compute the average of a list of values of the Fractional
@@ -141,7 +142,7 @@ incrementKey k kvs = map (\x -> if fst x == k then (fst x, (snd x)+1) else (fst 
 -- length to a Fractional
 
 average :: Fractional a => [a] -> a
-average xs = (fracSum (fromIntegral 0) xs) / fromIntegral (length xs)
+average xs = fracSum 0 xs / fromIntegral (length xs)
   where fracSum tot (x:[]) = x+tot
         fracSum tot (x:xs) = fracSum (x+tot) xs
 
@@ -162,7 +163,9 @@ average xs = (fracSum (fromIntegral 0) xs) / fromIntegral (length xs)
 --     ==> "Lisa"
 
 winner :: Map.Map String Int -> String -> String -> String
-winner scores player1 player2 = if Map.findWithDefault 0 player1 scores >= Map.findWithDefault 0 player2 scores then player1 else player2
+winner scores player1 player2 = if Map.findWithDefault 0 player1 scores >= Map.findWithDefault 0 player2 scores
+                                then player1
+                                else player2
 
 ------------------------------------------------------------------------------
 -- Ex 9: compute how many times each value in the list occurs. Return
@@ -239,6 +242,6 @@ swap i j arr = arr // [(i, arr ! j), (j, arr ! i)]
 -- Hint: check out Data.Array.indices or Data.Array.assocs
 
 maxIndex :: (Ix i, Ord a) => Array i a -> i
-maxIndex arr = findMaxIndex (assocs arr !! 0) (assocs arr)
+maxIndex arr = findMaxIndex (head (assocs arr)) (assocs arr)
                  where findMaxIndex currMaxAssoc (x:[]) = if snd x > snd currMaxAssoc then fst x else fst currMaxAssoc
                        findMaxIndex currMaxAssoc (x:xs) = if snd x > snd currMaxAssoc then findMaxIndex x xs else findMaxIndex currMaxAssoc xs

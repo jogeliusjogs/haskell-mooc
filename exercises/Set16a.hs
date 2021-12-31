@@ -110,7 +110,7 @@ freq2 xs = map (\x -> (x,1)) xs
 --  +++ OK, passed 100 tests.
 
 outputInInput :: (Show a, Eq a) => [a] -> [(a,Int)] -> Property
-outputInInput input output = forAll (elements output) (\x -> snd x === length (filter (==(fst x)) input))
+outputInInput input output = forAll (elements output) (\x -> snd x === length (filter (==fst x) input))
 
 -- This function passes the outputInInput test but not the others
 freq3 :: Eq a => [a] -> [(a,Int)]
@@ -139,9 +139,9 @@ freq3 (x:xs) = [(x,1 + length (filter (==x) xs))]
 --  +++ OK, passed 100 tests.
 
 frequenciesProp :: ([Char] -> [(Char,Int)]) -> NonEmptyList Char -> Property
-frequenciesProp freq (NonEmpty input) = conjoin [(sumIsLength input processedInput),
-                                                 (inputInOutput input processedInput),
-                                                 (outputInInput input processedInput)]
+frequenciesProp freq (NonEmpty input) = conjoin [sumIsLength input processedInput,
+                                                 inputInOutput input processedInput,
+                                                 outputInInput input processedInput]
                                                  where processedInput = freq input
 
 frequencies :: Eq a => [a] -> [(a,Int)]
@@ -176,7 +176,7 @@ genList :: Gen [Int]
 genList = do possibleLengths <- choose (3,5)
              unsortedRetVal <- vectorOf possibleLengths (elements [0..10])
              return (sort unsortedRetVal)
-  
+
 ------------------------------------------------------------------------------
 -- Ex 7: Here are the datatypes Arg and Expression from Set 15. Write
 -- Arbitrary instances for Expression and Arg such that:

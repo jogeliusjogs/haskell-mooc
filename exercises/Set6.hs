@@ -25,13 +25,10 @@ instance Eq Country where
 -- Remember minimal complete definitions!
 
 instance Ord Country where
-  (<=) x y = if x == Finland
-               then True
-               else if x == Norway
-                 then y /= Finland
-                 else if x == Switzerland
-                   then y == Switzerland
-                   else False
+  (<=) x y
+    | x == Finland = True
+    | x == Norway = y /= Finland
+    | otherwise = y == Switzerland
 
 ------------------------------------------------------------------------------
 -- Ex 3: Implement an Eq instance for the type Name which contains a String.
@@ -47,12 +44,7 @@ data Name = Name String
   deriving Show
 
 instance Eq Name where
-  (==) (Name "") (Name (y:_)) = False
-  (==) (Name (x:_)) (Name "") = False
-  (==) (Name (x:[])) (Name (y:[])) = toLower x == toLower y
-  (==) (Name (x:xs)) (Name (y:ys)) = if toLower x /= toLower y
-                         then False
-                         else (==) (Name xs) (Name ys)
+  (==) (Name a) (Name b) = map toLower a == map toLower b
 
 ------------------------------------------------------------------------------
 -- Ex 4: here is a list type parameterized over the type it contains.
@@ -69,7 +61,7 @@ instance Eq a => Eq (List a) where
   (==) Empty Empty = True
   (==) Empty (LNode _ _) = False
   (==) (LNode _ _) Empty = False
-  (==) (LNode x xs) (LNode y ys) = if x == y then (==) xs ys else False
+  (==) (LNode x xs) (LNode y ys) = (x == y) && (==) xs ys
 
 ------------------------------------------------------------------------------
 -- Ex 5: below you'll find two datatypes, Egg and Milk. Implement a
@@ -92,7 +84,7 @@ data Milk = Milk Int -- amount in litres
 class Price a where
   price :: a -> Int
 
-instance Price Egg where 
+instance Price Egg where
   price ChickenEgg = 20
   price ChocolateEgg = 30
 
@@ -174,7 +166,8 @@ instance Eq RationalNumber where
 -- Hint: Remember the function gcd?
 
 simplify :: RationalNumber -> RationalNumber
-simplify (RationalNumber a b) = RationalNumber (div a (gcd a b)) (div b (gcd a b))
+simplify (RationalNumber a b) = let gcd_a_b = gcd a b
+                                in RationalNumber (div a gcd_a_b) (div b gcd_a_b)
 
 ------------------------------------------------------------------------------
 -- Ex 10: implement the typeclass Num for RationalNumber. The results
@@ -195,12 +188,12 @@ simplify (RationalNumber a b) = RationalNumber (div a (gcd a b)) (div b (gcd a b
 --   signum (RationalNumber 0 2)             ==> RationalNumber 0 1
 
 instance Num RationalNumber where
-  (RationalNumber a b) + (RationalNumber c d) = simplify (RationalNumber (a*d+b*c) (b*d)) 
+  (RationalNumber a b) + (RationalNumber c d) = simplify (RationalNumber (a*d+b*c) (b*d))
   (RationalNumber a b) * (RationalNumber c d) = simplify (RationalNumber (a*c) (b*d))
-  abs (RationalNumber a b) = RationalNumber (abs a) b 
+  abs (RationalNumber a b) = RationalNumber (abs a) b
   signum (RationalNumber a b) = RationalNumber (signum a) (signum b)
-  fromInteger n = (RationalNumber n 1)
-  negate (RationalNumber a b) = (RationalNumber (-a) b) 
+  fromInteger n = RationalNumber n 1
+  negate (RationalNumber a b) = RationalNumber (-a) b
 
 ------------------------------------------------------------------------------
 -- Ex 11: a class for adding things. Define a class Addable with a
@@ -267,8 +260,6 @@ instance Cycle Color where
     Red -> Green
     Green -> Blue
     Blue -> Red
-  stepMany 0 color = color
-  stepMany n color = stepMany (n-1) (step color)
 
 instance Cycle Suit where
   step suit = case suit of
@@ -276,5 +267,3 @@ instance Cycle Suit where
     Spade -> Diamond
     Diamond -> Heart
     Heart -> Club
-  stepMany 0 suit = suit
-  stepMany n suit = stepMany (n-1) (step suit)

@@ -217,7 +217,7 @@ compose (x:[]) mappings2 = case lookup (snd x) mappings2 of
   Just y -> [(fst x, y)]
 compose (x:xs) mappings2 = case lookup (snd x) mappings2 of
   Nothing -> compose xs mappings2
-  Just y -> [(fst x, y)] ++ (compose xs mappings2)
+  Just y -> (fst x, y) : compose xs mappings2
 
 ------------------------------------------------------------------------------
 -- Ex 9: Reorder a list using a list of indices.
@@ -261,4 +261,4 @@ multiply :: Permutation -> Permutation -> Permutation
 multiply p q = map (\i -> p !! (q !! i)) (identity (length p))
 
 permute :: Permutation -> [a] -> [a]
-permute p l = map (\x -> snd x) (sortBy (comparing (\(x,y) -> x)) (zip p l))
+permute p l = map snd (sortBy (comparing fst) (zip p l))

@@ -48,9 +48,9 @@ takeFinal n xs = if length xs < n
 --   updateAt 2 0 [4,5,6,7] ==>  [4,5,0,7]
 
 updateAt :: Int -> a -> [a] -> [a]
-updateAt i x xs = if i >= (length xs) || i < 0
+updateAt i x xs = if i >= length xs || i < 0
                   then xs
-                  else (take i xs) ++ [x] ++ (drop (i+1) xs)
+                  else take i xs ++ [x] ++ drop (i+1) xs
 
 ------------------------------------------------------------------------------
 -- Ex 4: substring i j s should return the substring of s starting at
@@ -79,7 +79,9 @@ substring i j s = take (j-i) (drop i s)
 --   isPalindrome "AB"       ==>  False
 
 isPalindrome :: String -> Bool
-isPalindrome str = (take (div (length str) 2) str) == (take (div (length str) 2) (reverse str))
+isPalindrome str = take (div (length str) 2) str == take (div (length str) 2) (reverse str)
+
+--or then just 'reverse str' :)
 
 ------------------------------------------------------------------------------
 -- Ex 6: implement the function palindromify that chops a character
@@ -151,7 +153,7 @@ safeIndex xs i = if i < 0 || i >= length xs
 --   eitherDiv 4 0   ==> Left "4/0"
 
 eitherDiv :: Integer -> Integer -> Either String Integer
-eitherDiv x 0 = Left ((show x) ++ "/0")
+eitherDiv x 0 = Left (show x ++ "/0")
 eitherDiv x y = Right (div x y)
 
 ------------------------------------------------------------------------------
@@ -170,6 +172,5 @@ eitherDiv x y = Right (div x y)
 
 addEithers :: Either String Int -> Either String Int -> Either String Int
 addEithers (Right x) (Right y) = Right (x + y)
-addEithers (Left x) (Left y) = Left x
-addEithers (Left x) (Right y)  = Left x
-addEithers (Right x) (Left y) = Left y
+addEithers (Left x) _ = Left x
+addEithers _ (Left y) = Left y

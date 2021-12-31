@@ -60,7 +60,7 @@ checkNumber (s1, s2) = if length (filter isDigit s1) > 0 || length (filter isDig
 -- unchanged if both start with a capital letter. Otherwise Nothing is
 -- returned.
 checkCapitals :: (String, String) -> Maybe (String, String)
-checkCapitals (for,sur) = if isUpper (head for) && isUpper (head sur) then Just (for, sur) else Nothing 
+checkCapitals (for,sur) = if isUpper (head for) && isUpper (head sur) then Just (for, sur) else Nothing
 
 ------------------------------------------------------------------------------
 -- Ex 2: Given a list of players and their scores (as [(String,Int)]),
@@ -114,7 +114,7 @@ selectSum _ [] = Just 0
 selectSum [] _ = Nothing
 selectSum xs is = safeIndex xs (head is) >>= (\x -> selectSumHelper x xs (tail is))
   where selectSumHelper acc xs [] = Just acc
-        selectSumHelper acc xs is = safeIndex xs (head is) >>= (\z -> selectSumHelper (z+acc) xs (tail is))
+        selectSumHelper acc xs is = safeIndex xs (head is) >>= (\x -> selectSumHelper (x+acc) xs (tail is))
 
 safeIndex :: [a] -> Int -> Maybe a
 safeIndex xs idx = if idx < 0 || idx >= length xs then Nothing else Just (xs !! idx)
@@ -152,7 +152,7 @@ instance Applicative Logger where
 
 countAndLog :: Show a => (a -> Bool) -> [a] -> Logger Int
 countAndLog predicate xs = Logger (map show filteredElems) (length filteredElems)
-  where filteredElems = filter predicate xs  
+  where filteredElems = filter predicate xs
 
 ------------------------------------------------------------------------------
 -- Ex 5: You can find the Bank and BankOp code from the course
@@ -170,7 +170,7 @@ exampleBank = (Bank (Map.fromList [("harry",10),("cedric",7),("ginny",1)]))
 
 balance :: String -> BankOp Int
 balance accountName = BankOp accountNameHelper
-  where accountNameHelper (Bank bank) = ((Map.findWithDefault 0 accountName bank), (Bank bank))
+  where accountNameHelper (Bank bank) = (Map.findWithDefault 0 accountName bank, Bank bank)
 
 ------------------------------------------------------------------------------
 -- Ex 6: Using the operations balance, withdrawOp and depositOp, and
@@ -188,7 +188,7 @@ balance accountName = BankOp accountNameHelper
 --     ==> ((),Bank (fromList [("cedric",7),("ginny",1),("harry",10)]))
 
 rob :: String -> String -> BankOp ()
-rob from to = 
+rob from to =
   balance from
   +>
   withdrawOp from
@@ -236,7 +236,7 @@ update = do old <- get
 paren :: Char -> State Int ()
 paren c = do old <- get
              case old of
-               -1 -> put (old)
+               -1 -> put old
                otherwise -> case c of
                               '(' -> put (old+1)
                               ')' -> put (old-1)
@@ -273,7 +273,7 @@ count :: Eq a => a -> State [(a,Int)] ()
 count x = do old <- get
              case lookup x old of
                Nothing -> put (old ++ [(x,1)])
-               Just y -> put (map (\(a, b) -> if a == x then (a, (b+1)) else (a,b)) old)
+               Just y -> put (map (\(a, b) -> if a == x then (a, b+1) else (a,b)) old)
 
 ------------------------------------------------------------------------------
 -- Ex 10: Implement the operation occurrences, which

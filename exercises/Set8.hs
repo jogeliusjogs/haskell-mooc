@@ -285,7 +285,7 @@ exampleSnowman = fill white snowman
 
 paintSolid :: Color -> Shape -> Picture -> Picture
 paintSolid color (Shape s) (Picture base) = Picture p
-  where p (Coord x y) = if (s (Coord x y)) then color else base (Coord x y)
+  where p (Coord x y) = if s (Coord x y) then color else base (Coord x y)
 
 ------------------------------------------------------------------------------
 
@@ -332,7 +332,7 @@ stripes a b = Picture f
 
 paint :: Picture -> Shape -> Picture -> Picture
 paint (Picture pattern) (Shape s) (Picture base) = Picture p
-  where p (Coord x y) = if (s (Coord x y)) then pattern (Coord x y) else base (Coord x y)
+  where p (Coord x y) = if s (Coord x y) then pattern (Coord x y) else base (Coord x y)
 ------------------------------------------------------------------------------
 
 -- Here's a patterned version of the snowman example. See it by running:

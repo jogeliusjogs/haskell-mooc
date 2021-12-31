@@ -26,7 +26,6 @@ one = 1
 two :: Int
 two = 2
 
-
 ------------------------------------------------------------------------------
 -- Ex 2: define the function double of type Integer->Integer. Double
 -- should take one argument and return it multiplied by two.
@@ -66,7 +65,7 @@ distance x1 y1 x2 y2 = sqrt((x1-x2)^2 + (y1-y2)^2)
 -- Ps. have a look at the built in function "even"
 
 eeny :: Integer -> String
-eeny x = if even(x) then "eeny" else "meeny"
+eeny x = if even x then "eeny" else "meeny"
 
 ------------------------------------------------------------------------------
 -- Ex 6: here's the function checkPassword from the course material.
@@ -113,7 +112,7 @@ isZero _ = False
 
 sumTo :: Integer -> Integer
 sumTo 0 = 0
-sumTo x = x + sumTo(x-1)
+sumTo x = x + sumTo (x-1)
 
 ------------------------------------------------------------------------------
 -- Ex 10: power n k should compute n to the power k (i.e. n^k)

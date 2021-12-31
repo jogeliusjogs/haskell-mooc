@@ -60,16 +60,12 @@ shout txt = shoutHelper (T.pack "") True (T.words txt)
 longestRepeat :: T.Text -> Int
 longestRepeat txt = if T.empty == txt then 0 else longestRepeatHelper (T.head txt) 1 1 (T.unpack (T.tail txt))
   where longestRepeatHelper c accMax acc [] = accMax
-        longestRepeatHelper c accMax acc (x:[]) = if x == c
-                                                    then if (acc+1) > accMax
-                                                         then (acc+1)
-                                                         else accMax
-                                                    else accMax
+        longestRepeatHelper c accMax acc (x:[]) = if (x == c) && ((acc+1) > accMax) then acc+1 else accMax
         longestRepeatHelper c accMax acc (x:xs) = if x == c
-                                                then if (acc+1) > accMax
-                                                     then longestRepeatHelper c (acc+1) (acc+1) xs
-                                                     else longestRepeatHelper c accMax (acc+1) xs
-                                                else longestRepeatHelper x accMax 1 xs
+                                                  then if (acc+1) > accMax
+                                                       then longestRepeatHelper c (acc+1) (acc+1) xs
+                                                       else longestRepeatHelper c accMax (acc+1) xs
+                                                  else longestRepeatHelper x accMax 1 xs
 
 ------------------------------------------------------------------------------
 -- Ex 4: Given a lazy (potentially infinite) Text, extract the first n
@@ -96,7 +92,7 @@ takeStrict n txt = TL.toStrict (TL.take n txt)
 byteRange :: B.ByteString -> Word8
 byteRange bs = if B.null bs
                  then 0
-                 else (B.maximum bs) - (B.minimum bs)
+                 else B.maximum bs - B.minimum bs
 
 ------------------------------------------------------------------------------
 -- Ex 6: Compute the XOR checksum of a ByteString. The XOR checksum of
@@ -117,7 +113,7 @@ byteRange bs = if B.null bs
 --   xorChecksum (B.pack []) ==> 0
 
 xorChecksum :: B.ByteString -> Word8
-xorChecksum bs = if B.null bs 
+xorChecksum bs = if B.null bs
                    then 0
                    else xorCheckSumHelper (head (B.unpack bs)) (tail (B.unpack bs))
 xorCheckSumHelper curr [] = curr
@@ -153,5 +149,5 @@ countUtf8Chars bs = case Data.Text.Encoding.decodeUtf8' bs of
 --     ==> [0,1,2,2,1,0,0,1,2,2,1,0,0,1,2,2,1,0,0,1]
 
 pingpong :: B.ByteString -> BL.ByteString
-pingpong bs = BL.cycle (BL.fromStrict (bs <> (B.reverse bs)))
+pingpong bs = BL.cycle (BL.fromStrict (bs <> B.reverse bs))
 

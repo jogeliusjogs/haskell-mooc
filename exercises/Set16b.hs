@@ -101,10 +101,10 @@ class Render currency where
   render :: Money currency -> String
 
 instance Render EUR where
-  render (Money money) = (show money) ++ "e"
+  render (Money money) = show money ++ "e"
 
 instance Render USD where
-  render (Money money) = "$" ++ (show money)
+  render (Money money) = "$" ++ show money
 
 instance Render CHF where
-  render (Money money) = (show money) ++ "chf" 
+  render (Money money) = show money ++ "chf" 

@@ -101,13 +101,12 @@ nextCol (i,j) = (i, j+1)
 -- with the O-notation.)
 prettyPrint :: Size -> [Coord] -> String
 prettyPrint size queenCoords = [printChar i j | i <- [1..size], j <- [1..(size+1)],
-                                let printChar i j = if elem (i, j) queenCoords
-                                                      then 'Q'
-                                                      else if j == (size+1)
-                                                        then '\n'
-                                                        else '.']
+                                let printChar i j
+                                      | elem (i, j) queenCoords = 'Q'
+                                      | j == (size+1) = '\n'
+                                      | otherwise = '.']
 
-   
+
 --------------------------------------------------------------------------------
 -- Ex 3: The task in this exercise is to define the relations sameRow, sameCol,
 -- sameDiag, and sameAntidiag that check whether or not two coordinates of the
@@ -195,8 +194,8 @@ type Candidate = Coord
 type Stack     = [Coord]
 
 danger :: Candidate -> Stack -> Bool
-danger cand (x:[]) = (sameRow x cand) || (sameCol x cand) || (sameDiag x cand || sameAntidiag x cand)
-danger cand (x:xs) = (danger cand [x]) || (danger cand xs) 
+danger cand (x:[]) = sameRow x cand || sameCol x cand || sameDiag x cand || sameAntidiag x cand
+danger cand (x:xs) = danger cand [x] || danger cand xs
 
 --------------------------------------------------------------------------------
 -- Ex 5: In this exercise, the task is to write a modified version of
@@ -232,13 +231,11 @@ danger cand (x:xs) = (danger cand [x]) || (danger cand xs)
 
 prettyPrint2 :: Size -> Stack -> String
 prettyPrint2 size queenCoords = [printChar i j | i <- [1..size], j <- [1..(size+1)],
-                                let printChar i j = if elem (i, j) queenCoords
-                                                      then 'Q'
-                                                      else if j == (size+1)
-                                                        then '\n'
-                                                        else if danger (i, j) queenCoords
-                                                          then '#'
-                                                          else '.']
+                                let printChar i j
+                                      | elem (i, j) queenCoords = 'Q'
+                                      | j == (size+1) = '\n'
+                                      | danger (i, j) queenCoords = '#'
+                                      | otherwise = '.']
 
 --------------------------------------------------------------------------------
 -- Ex 6: Now that we can check if a piece can be safely placed into a square in
@@ -284,11 +281,11 @@ prettyPrint2 size queenCoords = [printChar i j | i <- [1..size], j <- [1..(size+
 
 fixFirst :: Size -> Stack -> Maybe Stack
 fixFirst n [] = Nothing
-fixFirst n ((i, j):[]) = if i > n || j > n then Nothing else Just [(i, j)] 
-fixFirst n ((i, j):xs) = if i > n || j > n then Nothing
-                           else if (danger (i, j) xs)
-                              then fixFirst n ((i, j+1):xs)
-                              else Just ((i, j):xs)
+fixFirst n ((i, j):[]) = if i > n || j > n then Nothing else Just [(i, j)]
+fixFirst n ((i, j):xs)
+  | i > n || j > n = Nothing
+  | danger (i, j) xs = fixFirst n ((i, j+1):xs)
+  | otherwise = Just ((i, j):xs)
 
 --------------------------------------------------------------------------------
 -- Ex 7: We need two helper functions for stack management.

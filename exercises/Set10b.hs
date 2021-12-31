@@ -39,7 +39,7 @@ x ||| _ = x
 boolLength :: [Bool] -> Int
 boolLength xs = boolLengthHelper 0 xs
   where boolLengthHelper acc [] = acc
-        boolLengthHelper acc (x:xs) = if (True ||| x) then boolLengthHelper (acc+1) xs else 0
+        boolLengthHelper acc (x:xs) = if True ||| x then boolLengthHelper (acc+1) xs else 0
 
 ------------------------------------------------------------------------------
 -- Ex 3: Define the function validate which, given a predicate and a
@@ -87,7 +87,7 @@ class MySeq a where
   myseq :: a -> b -> b
 
 instance MySeq Bool where
-  myseq a b = if (True ||| a) then b else b
+  myseq a b = if True ||| a then b else b
 
 instance MySeq Int where
   myseq 0 b = b

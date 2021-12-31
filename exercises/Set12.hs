@@ -213,7 +213,7 @@ instance Functor Tree where
 
 sumTree :: Monoid m => Tree m -> m
 sumTree Leaf = mempty
-sumTree (Node n ta tb) =  (sumTree ta) <> n <> (sumTree tb)
+sumTree (Node n ta tb) =  sumTree ta <> n <> sumTree tb
 
 instance Foldable Tree where
   foldMap f t = sumTree (fmap f t)

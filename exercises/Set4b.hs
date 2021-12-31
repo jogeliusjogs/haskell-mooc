@@ -59,7 +59,7 @@ sumAndLength xs = foldr slHelper slStart xs
 slStart :: (Double, Int)
 slStart = (0, 0)
 slHelper :: Double -> (Double, Int) -> (Double, Int)
-slHelper curr accumulator = (curr + fst accumulator, (snd accumulator) + 1) 
+slHelper curr accumulator = (curr + fst accumulator, snd accumulator + 1) 
 
 ------------------------------------------------------------------------------
 -- Ex 4: implement concat with a fold. Define concatHelper and
@@ -91,10 +91,10 @@ largest xs = foldr largestHelper [] xs
 
 largestHelper :: Int -> [Int] -> [Int]
 largestHelper curr accumulator = if accumulator == [] || curr > head accumulator
-                                   then [curr]
-                                   else if curr == head accumulator
-                                    then replicate (1 + length accumulator) curr 
-                                    else accumulator  
+                                 then [curr]
+                                 else if curr == head accumulator
+                                      then replicate (1 + length accumulator) curr 
+                                      else accumulator  
 
 
 ------------------------------------------------------------------------------

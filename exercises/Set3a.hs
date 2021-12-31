@@ -43,7 +43,7 @@ maxBy measure a b = if measure a > measure b
 
 mapMaybe :: (a -> b) -> Maybe a -> Maybe b
 mapMaybe f Nothing = Nothing
-mapMaybe f (Just x) = Just (f x) 
+mapMaybe f (Just x) = Just (f x)
 
 ------------------------------------------------------------------------------
 -- Ex 3: implement the function mapMaybe2 that works like mapMaybe
@@ -59,7 +59,7 @@ mapMaybe f (Just x) = Just (f x)
 mapMaybe2 :: (a -> b -> c) -> Maybe a -> Maybe b -> Maybe c
 mapMaybe2 f _ Nothing = Nothing
 mapMaybe2 f Nothing _ = Nothing
-mapMaybe2 f (Just a) (Just b) = Just (f a b) 
+mapMaybe2 f (Just a) (Just b) = Just (f a b)
 
 ------------------------------------------------------------------------------
 -- Ex 4: define the functions firstHalf and palindrome so that
@@ -82,10 +82,10 @@ palindromeHalfs :: [String] -> [String]
 palindromeHalfs xs = map firstHalf (filter palindrome xs)
 
 firstHalf :: String -> String
-firstHalf s = if even (length s) then take (div (length s) 2) s else take ((div (length s) 2) + 1) s
+firstHalf s = if even (length s) then take (div (length s) 2) s else take (div (length s) 2 + 1) s
 
 palindrome :: String -> Bool
-palindrome s = if s == reverse s then True else False 
+palindrome s = s == reverse s
 
 ------------------------------------------------------------------------------
 -- Ex 5: Implement a function capitalize that takes in a string and
@@ -106,7 +106,7 @@ capitalize :: String -> String
 capitalize s = unwords (map capitalizeFirst (words s))
 
 capitalizeFirst :: String -> String
-capitalizeFirst s = [(toUpper (s !! 0))] ++ (tail s)
+capitalizeFirst s = toUpper (head s) : tail s
 
 ------------------------------------------------------------------------------
 -- Ex 6: powers k max should return all the powers of k that are less
@@ -147,8 +147,8 @@ powers k max = takeWhile ( <= max) [k^i | i <- [0..max]]
 
 while :: (a->Bool) -> (a->a) -> a -> a
 while check update value = if check value
-                             then while check update (update value)
-                             else value
+                           then while check update (update value)
+                           else value
 
 ------------------------------------------------------------------------------
 -- Ex 8: another version of a while loop. This time, the check
@@ -165,7 +165,7 @@ while check update value = if check value
 --   whileRight (step 1000) 3  ==> 1536
 
 whileRight :: (a -> Either b a) -> a -> b
-whileRight f x = case (f x) of
+whileRight f x = case f x of
                    Left l -> l
                    Right r -> whileRight f r
 
@@ -245,7 +245,7 @@ sumRightsHelper x = case x of
 --   multiCompose [(+1), (2^), (3*)] 0 ==> 2
 
 multiCompose [] x = x
-multiCompose fs x = (head fs) (multiCompose (tail fs) x)
+multiCompose fs x = head fs (multiCompose (tail fs) x)
 
 ------------------------------------------------------------------------------
 -- Ex 13: let's consider another way to compose multiple functions. Given
@@ -301,14 +301,15 @@ multiApp f gs x = f (map ($ x) gs)
 -- function, the surprise won't work.
 
 interpreter :: [String] -> [String]
-interpreter commands = interpreterHelper 0 0 [] commands
+interpreter commands = interpreterHelper 0 0 commands
 
-interpreterHelper :: Int -> Int -> [String] -> [String] -> [String]
-interpreterHelper _ _ a [] = a
-interpreterHelper currX currY currResult (currCommand:remainingCommands) = case currCommand of
-  "up" -> interpreterHelper currX (currY+1) currResult remainingCommands
-  "down" -> interpreterHelper currX (currY-1) currResult remainingCommands
-  "left" -> interpreterHelper (currX-1) currY currResult remainingCommands
-  "right" -> interpreterHelper (currX+1) currY currResult remainingCommands
-  "printX" -> interpreterHelper currX currY (currResult ++ [(show currX)]) remainingCommands
-  "printY" -> interpreterHelper currX currY (currResult ++ [(show currY)]) remainingCommands
+interpreterHelper :: Int -> Int -> [String] -> [String]
+interpreterHelper _ _ [] = []
+interpreterHelper currX currY (currCommand:remainingCommands) = case currCommand of
+  "up" -> interpreterHelper currX (currY+1) remainingCommands
+  "down" -> interpreterHelper currX (currY-1) remainingCommands
+  "left" -> interpreterHelper (currX-1) currY remainingCommands
+  "right" -> interpreterHelper (currX+1) currY remainingCommands
+  "printX" -> show currX : interpreterHelper currX currY remainingCommands
+  "printY" -> show currY : interpreterHelper currX currY remainingCommands
+  _ -> ["Should not happen"]

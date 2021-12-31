@@ -85,7 +85,7 @@ readUntil f = readUntilHelper f []
         readUntilHelper f acc = do
                                   ln <- getLine
                                   if f ln then return acc else readUntilHelper f (acc ++ [ln])
-  
+
 
 ------------------------------------------------------------------------------
 -- Ex 6: given n, print the numbers from n to 0, one per line
@@ -93,7 +93,7 @@ readUntil f = readUntilHelper f []
 countdownPrint :: Int -> IO ()
 countdownPrint 0 = putStrLn "0"
 countdownPrint n = do
-  putStrLn (show n)
+  print n
   countdownPrint (n-1)
 
 ------------------------------------------------------------------------------
@@ -115,7 +115,7 @@ isums n = isumsHelper 0 n
           return acc
         isumsHelper acc n = do
           i <- readLn
-          putStrLn (show (acc+i))
+          print (acc+i)
           isumsHelper (acc+i) (n-1)
 
 ------------------------------------------------------------------------------

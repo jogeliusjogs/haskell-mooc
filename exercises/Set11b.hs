@@ -22,7 +22,7 @@ import Mooc.Todo
 appendAll :: IORef String -> [String] -> IO ()
 appendAll ref strings = do
   curr <- readIORef ref
-  writeIORef ref (curr ++ (concat strings))
+  writeIORef ref (curr ++ concat strings)
 
 ------------------------------------------------------------------------------
 -- Ex 2: Given two IORefs, swap the values stored in them.
@@ -69,8 +69,7 @@ swapIORefs a b = do
 doubleCall :: IO (IO a) -> IO a
 doubleCall op = do
   opRet <- op
-  opRetRet <- opRet
-  return (opRetRet)
+  opRet
 ------------------------------------------------------------------------------
 -- Ex 4: implement the analogue of function composition (the (.)
 -- operator) for IO operations. That is, take an operation op1 of type
@@ -90,8 +89,8 @@ doubleCall op = do
 compose :: (a -> IO b) -> (c -> IO a) -> c -> IO b
 compose op1 op2 c = do
   op2Ret <- op2 c
-  op1Ret <- op1 op2Ret
-  return op1Ret
+  op1 op2Ret
+  
 ------------------------------------------------------------------------------
 -- Ex 5: Reading lines from a file. The module System.IO defines
 -- operations for Handles, which represent open files that can be read

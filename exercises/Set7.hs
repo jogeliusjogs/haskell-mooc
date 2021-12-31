@@ -58,8 +58,7 @@ member e (Set s) = elem e s
 -- add a member to a set
 add :: (Eq a, Ord a) => a -> Set a -> Set a
 add e (Set []) = Set [e]
-add e (Set (x:[])) = if e == x then Set [x] else Set (sort [e, x]) 
-add e (Set xs) = if member e (Set xs) then Set xs else Set (sort (e:xs)) 
+add e (Set xs) = if member e (Set xs) then Set xs else Set (sort (e:xs)) --sorts on each add, not optimized for performance
 
 ------------------------------------------------------------------------------
 -- Ex 3: a state machine for baking a cake. The type Event represents
@@ -104,20 +103,20 @@ step s e = case e of
     EggsAdded -> FlourAdded
     SugarAdded -> FlourAndSugarAdded
     Finished -> Finished
-    otherwise -> Error
+    _ -> Error
   AddSugar -> case s of
     EggsAdded -> SugarAdded
     FlourAdded -> FlourAndSugarAdded
     Finished -> Finished
-    otherwise -> Error
+    _ -> Error
   Mix -> case s of
     FlourAndSugarAdded -> Mixed
     Finished -> Finished
-    otherwise -> Error
+    _ -> Error
   Bake -> case s of
     Mixed -> Finished
     Finished -> Finished
-    otherwise -> Error
+    _ -> Error
 
 -- do not edit this
 bake :: [Event] -> State
@@ -142,7 +141,7 @@ average xs = sum xs / fromIntegral (length xs)
 
 reverseNonEmpty :: NonEmpty a -> NonEmpty a
 reverseNonEmpty (x :| []) = x :| []
-reverseNonEmpty (x :| xs) = last xs :| reverse (x:(init xs))
+reverseNonEmpty (x :| xs) = last xs :| reverse (x:init xs)
 
 ------------------------------------------------------------------------------
 -- Ex 6: implement Semigroup instances for the Distance, Time and
@@ -263,8 +262,8 @@ data PasswordRequirement =
 passwordAllowed :: String -> PasswordRequirement -> Bool
 passwordAllowed password req = case req of
   (MinimumLength l) -> length password >= l
-  (ContainsSome s) -> length (intersect s password ) > 0
-  (DoesNotContain s) -> length (intersect s password ) == 0
+  (ContainsSome s) -> not (null (intersect s password))
+  (DoesNotContain s) -> null (intersect s password)
   (And a b) -> passwordAllowed password a && passwordAllowed password b
   (Or a b) -> passwordAllowed password a || passwordAllowed password b
 
@@ -309,5 +308,5 @@ evaluate (ArOp "+" (ArOp op1 a1 b1) (ArOp op2 a2 b2)) = evaluate (operation op1 
 evaluate (ArOp "*" (ArOp op1 a1 b1) (ArOp op2 a2 b2)) = evaluate (operation op1 a1 b1) * evaluate (operation op2 a2 b2)
 
 render :: Arithmetic -> String
-render (ArOp op a b) = "(" ++ (render a) ++ op ++ (render b) ++ ")" 
+render (ArOp op a b) = "(" ++ render a ++ op ++ render b ++ ")" 
 render (ArInt n) = show n

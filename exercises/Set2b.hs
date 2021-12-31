@@ -19,7 +19,7 @@ binomial :: Integer -> Integer -> Integer
 binomial 0 k
   | k > 0 = 0
 binomial n 0 = 1
-binomial n k = (binomial (n-1) k) + (binomial (n-1) (k-1))
+binomial n k = binomial (n-1) k + binomial (n-1) (k-1)
 
 ------------------------------------------------------------------------------
 -- Ex 2: implement the odd factorial function. Odd factorial is like
@@ -89,7 +89,6 @@ leftpad s l = if length s >= l
               then s
               else leftpad (" " ++ s) l
 
-
 ------------------------------------------------------------------------------
 -- Ex 5: let's make a countdown for a rocket! Given a number, you
 -- should produce a string that says "Ready!", counts down from the
@@ -106,7 +105,7 @@ leftpad s l = if length s >= l
 countdown :: Integer -> String
 countdown n = countdownHelper n "Ready! "
 countdownHelper n str = if n >= 1
-                        then countdownHelper (n-1) (str ++ (show n) ++ "... ")
+                        then countdownHelper (n-1) (str ++ show n ++ "... ")
                         else str ++ "Liftoff!"
 
 ------------------------------------------------------------------------------
@@ -125,12 +124,11 @@ countdownHelper n str = if n >= 1
 -- Hint: remember the mod function!
 
 smallestDivisor :: Integer -> Integer
-smallestDivisor n = smallestDivisorHelper n n n
-smallestDivisorHelper n i currSmallest = if i == 1
-                                         then currSmallest
-                                         else if (mod n i) == 0
-                                         then smallestDivisorHelper n (i-1) i
-                                         else smallestDivisorHelper n (i-1) currSmallest
+smallestDivisor n = smallestDivisorHelper n 2
+
+smallestDivisorHelper n currIter
+  | mod n currIter == 0 = currIter
+  | otherwise      = smallestDivisorHelper n (currIter+1) 
 
 ------------------------------------------------------------------------------
 -- Ex 7: implement a function isPrime that checks if the given number

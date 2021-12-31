@@ -40,8 +40,8 @@ import Mooc.Todo
 
 buildList :: Int -> Int -> Int -> [Int]
 buildList start count end = if count > 0
-                              then start : buildList start (count-1) end
-                              else [end]
+                            then start : buildList start (count-1) end
+                            else [end]
 
 ------------------------------------------------------------------------------
 -- Ex 2: given i, build the list of sums [1, 1+2, 1+2+3, .., 1+2+..+i]
@@ -54,7 +54,7 @@ sums :: Int -> [Int]
 sums i = sumsHelper 1 i
 
 sumsHelper :: Int -> Int -> [Int]
-sumsHelper n i = if n <= i then sumsN n : (sumsHelper (n+1) i) else []
+sumsHelper n i = if n <= i then sumsN n : sumsHelper (n+1) i else []
 
 sumsN :: Int -> Int
 sumsN 1 = 1
@@ -139,7 +139,7 @@ sumsOfHelper (x:xs) currSum = (x+currSum):sumsOfHelper xs (x+currSum)
 merge :: [Int] -> [Int] -> [Int]
 merge [] ys = ys
 merge xs [] = xs
-merge (x:xs) (y:ys) = if x < y then x:(merge xs (y:ys)) else y:(merge (x:xs) ys)
+merge (x:xs) (y:ys) = if x < y then x:merge xs (y:ys) else y:merge (x:xs) ys
 
 ------------------------------------------------------------------------------
 -- Ex 8: define the function mymaximum that takes a list and a
@@ -200,6 +200,6 @@ map2 f (a:as) (b:bs) = f a b:map2 f as bs
 
 maybeMap :: (a -> Maybe b) -> [a] -> [b]
 maybeMap f [] = []
-maybeMap f (x:xs) = case (f x) of
+maybeMap f (x:xs) = case f x of
   Nothing -> maybeMap f xs
   Just result -> result : maybeMap f xs

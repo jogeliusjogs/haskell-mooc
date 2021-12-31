@@ -53,7 +53,7 @@ treeMax (Node r left right) = max r (max (treeMax left) (treeMax right))
 
 allValues :: (a -> Bool) -> Tree a -> Bool
 allValues condition Empty = True
-allValues condition (Node r left right) = (condition r) && (allValues condition left) && (allValues condition right)
+allValues condition (Node r left right) = condition r && allValues condition left && allValues condition right
 
 ------------------------------------------------------------------------------
 -- Ex 5: implement map for trees.
@@ -198,10 +198,12 @@ walk [] (Node root _ _) = Just root
 --   set [StepL,StepR] 1 (Node 0 Empty Empty)  ==>  (Node 0 Empty Empty)
 
 set :: [Step] -> a -> Tree a -> Tree a
-set [] val (Node root left right) = (Node val left right)
+set [] val (Node root left right) = Node val left right
 set [] val Empty = Empty
 set (x:xs) val Empty = Empty
-set (x:xs) val (Node root left right) = if x == StepL then Node root (set xs val left) right else Node root left (set xs val right)
+set (x:xs) val (Node root left right) = if x == StepL
+                                        then Node root (set xs val left) right
+                                        else Node root left (set xs val right)
 
 ------------------------------------------------------------------------------
 -- Ex 10: given a value and a tree, return a path that goes from the

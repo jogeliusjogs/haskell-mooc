@@ -246,7 +246,7 @@ data KeyVals k v = Empty | Pair k v (KeyVals k v)
 
 toList :: KeyVals k v -> [(k,v)]
 toList Empty = []
-toList (Pair k v kvs) = [(k,v)] ++ (toList kvs)
+toList (Pair k v kvs) = (k,v) : toList kvs
 
 fromList :: [(k,v)] -> KeyVals k v
 fromList [] = Empty
@@ -339,8 +339,8 @@ inc (I b) = O (inc b)
 prettyPrint :: Bin -> String
 prettyPrint b = case b of
   End -> ""
-  I b -> (prettyPrint b) ++ "1"
-  O b -> (prettyPrint b) ++ "0"
+  I b -> prettyPrint b ++ "1"
+  O b -> prettyPrint b ++ "0"
 
 fromBin :: Bin -> Int
 fromBin b = fromBinHelper 0 b
@@ -351,4 +351,4 @@ fromBin b = fromBinHelper 0 b
 
 toBin :: Int -> Bin
 toBin n = toBinHelper n (O End)
-  where toBinHelper result curr = if (fromBin curr) == result then curr else toBinHelper result (inc curr)
+  where toBinHelper result curr = if fromBin curr == result then curr else toBinHelper result (inc curr)

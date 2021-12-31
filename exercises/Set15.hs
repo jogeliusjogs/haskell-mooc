@@ -36,7 +36,7 @@ sumTwoMaybes a b = liftA2 (+) a b
 --         "code is not suffering","code is not life"]
 
 statements :: [String] -> [String] -> [String]
-statements xs ys = liftA2 (++) ((map (++" is not ") xs) ++ (map (++" is ") xs)) ys
+statements xs ys = liftA2 (++) (map (++" is not ") xs ++ map (++" is ") xs) ys
 
 ------------------------------------------------------------------------------
 -- Ex 3: A simple calculator with error handling. Given an operation
@@ -55,8 +55,8 @@ statements xs ys = liftA2 (++) ((map (++" is not ") xs) ++ (map (++" is ") xs)) 
 
 calculator :: String -> String -> Maybe Int
 calculator opString numString = case opString of
-  "negate" -> negate <$> (readMaybe numString)
-  "double" -> (*2) <$> (readMaybe numString)
+  "negate" -> negate <$> readMaybe numString
+  "double" -> (*2) <$> readMaybe numString
   otherwise -> Nothing
 
 ------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ data Address = Address String String String
   deriving (Show,Eq)
 
 validateAddress :: String -> String -> String -> Validation Address
-validateAddress streetName streetNumber postCode = 
+validateAddress streetName streetNumber postCode =
   liftA3 Address (checkStreetName streetName) (checkStreetNumber streetNumber) (checkPostCode postCode)
 
 checkStreetName :: String -> Validation String
@@ -137,9 +137,9 @@ data Person = Person String Int Bool
 
 twoPersons :: Applicative f =>
   f String -> f Int -> f Bool -> f String -> f Int -> f Bool
-  -> f [Person] 
+  -> f [Person]
 twoPersons name1 age1 employed1 name2 age2 employed2 = liftA2 (\x y -> [x, y]) (liftA3 Person name1 age1 employed1) (liftA3 Person name2 age2 employed2)
-  
+
 ------------------------------------------------------------------------------
 -- Ex 7: Validate a String that's either a Bool or an Int. The return
 -- type of the function uses Either Bool Int to be able to represent
@@ -245,7 +245,7 @@ parseExpression s = let parts = words s in
 
 checkParts :: [String] -> Validation Expression
 checkParts parts
-  | length parts /= 3 = invalid ("Invalid expression: " ++ (unwords parts))
+  | length parts /= 3 = invalid ("Invalid expression: " ++ unwords parts)
   | head (parts !! 1) == '+' = liftA2 Plus (checkArg (head parts)) (checkArg (parts !! 2))
   | head (parts !! 1) == '-' = liftA2 Minus (checkArg (head parts)) (checkArg (parts !! 2))
   | otherwise = invalid ("Unknown operator: " ++ (parts !! 1)) *> liftA2 Plus (checkArg (head parts)) (checkArg (parts !! 2))
@@ -336,7 +336,7 @@ f <#> x = myLiftA2 (\f x -> f x) f x
 --  myFmap negate [1,2,3]  ==> [-1,-2,-3]
 
 myFmap :: MyApplicative f => (a -> b) -> f a -> f b
-myFmap f x = (myPure f) <#> x
+myFmap f x = myPure f <#> x
 
 ------------------------------------------------------------------------------
 -- Ex 13: Given a function that returns an Alternative value, and a
@@ -363,7 +363,7 @@ myFmap f x = (myPure f) <#> x
 --       ==> Errors ["zero","zero","zero"]
 
 tryAll :: Alternative f => (a -> f b) -> [a] -> f b
-tryAll f xs = let mapping = (map f xs) in
+tryAll f xs = let mapping = map f xs in
   tryAllHelper mapping
 
 tryAllHelper [] = empty

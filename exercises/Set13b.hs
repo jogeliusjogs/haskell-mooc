@@ -86,8 +86,8 @@ mapM2 :: Monad m => (a -> b -> m c) -> [a] -> [b] -> m [c]
 mapM2 op [] _ = return []
 mapM2 op _ [] = return []
 mapM2 op (x:xs) (y:ys) = do firstElem <- op x y
-                            (mapM2 op xs ys) >>= (\x -> return ([firstElem] ++ x))
-                    
+                            mapM2 op xs ys >>= (\x -> return (firstElem : x))
+
 
 ------------------------------------------------------------------------------
 -- Ex 3: Finding paths.
@@ -148,11 +148,11 @@ visit :: [(String,[String])] -> String -> State [String] ()
 visit maze place = do currVisited <- get
                       if elem place currVisited
                         then return ()
-                        else do put ([place] ++ currVisited)
-                                let placeInMaze = lookup place maze
-                                case placeInMaze of
+                        else do put (place : currVisited)
+                                let maybeNeighbour = lookup place maze
+                                case maybeNeighbour of
                                   Nothing -> return ()
-                                  Just mazePlace -> visitHelper maze mazePlace
+                                  Just neighbour -> visitHelper maze neighbour
                                     where  visitHelper maze [] = return ()
                                            visitHelper maze mazePlace = do visit maze (head mazePlace)
                                                                            visitHelper maze (tail mazePlace)
@@ -352,8 +352,10 @@ instance Applicative SL where
 instance Monad SL where
   -- implement return and >>=
   return x = SL (\s -> (x, s, []))
-  (>>=) (SL x) f = join (SL (\s -> let (a, b, c) = x s in
-                             (f a, b, c)))
+  (>>=) (SL x) f = SL (\s -> let (a, b, c) = x s
+                                 SL d = f a
+                                 (e, g, h) = d b
+                             in (e, g, c ++ h))
 
 ------------------------------------------------------------------------------
 -- Ex 9: Implement the operation mkCounter that produces the IO operations

@@ -16,7 +16,7 @@ import Mooc.Todo
 --   take 10 (doublify [0..])  ==>  [0,0,1,1,2,2,3,3,4,4]
 
 doublify :: [a] -> [a]
-doublify (x:[]) = take 2 (repeat x) 
+doublify [] = []
 doublify (x:xs) = take 2 (repeat x) ++ doublify xs
 
 ------------------------------------------------------------------------------
@@ -41,7 +41,9 @@ interleave :: [a] -> [a] -> [a]
 interleave xs ys = interleaveHelper True xs ys
   where interleaveHelper takeFirst [] ys = ys
         interleaveHelper takeFirst xs [] = xs
-        interleaveHelper takeFirst (x:xs) (y:ys) = if takeFirst then [x] ++ (interleaveHelper False xs (y:ys)) else [y] ++ (interleaveHelper True (x:xs) ys)
+        interleaveHelper takeFirst (x:xs) (y:ys) = if takeFirst
+                                                   then x : interleaveHelper False xs (y:ys)
+                                                   else y : interleaveHelper True (x:xs) ys
 
 ------------------------------------------------------------------------------
 -- Ex 3: Deal out cards. Given a list of players (strings), and a list
@@ -80,7 +82,7 @@ deal players cards = zip cards (cycle players)
 averages :: [Double] -> [Double]
 averages [] = []
 averages (x:xs) = averagesHelper 0 0 (x:xs)
-  where averagesHelper counter acc (x:xs) = [(x + acc) / (counter + 1)] ++ averagesHelper (counter + 1) (acc + x) xs
+  where averagesHelper counter acc (x:xs) = ((x + acc) / (counter + 1)) : averagesHelper (counter + 1) (acc + x) xs
         averagesHelper counter acc [] = []
 
 ------------------------------------------------------------------------------
@@ -100,13 +102,11 @@ averages (x:xs) = averagesHelper 0 0 (x:xs)
 
 alternate :: [a] -> [a] -> a -> [a]
 alternate xs ys z = alternateHelper 0 xs ys z
-  where alternateHelper takeFrom xs ys z = if takeFrom == 0
-                                             then xs ++ alternateHelper 1 xs ys z
-                                             else if takeFrom == 1
-                                                    then [z] ++ alternateHelper 2 xs ys z
-                                                    else if takeFrom == 2
-                                                           then ys ++ alternateHelper 3 xs ys z
-                                                           else [z] ++ alternateHelper 0 xs ys z
+  where alternateHelper takeFrom xs ys z
+          | takeFrom == 0 = xs ++ alternateHelper 1 xs ys z
+          | takeFrom == 1 = z : alternateHelper 2 xs ys z
+          | takeFrom == 2 = ys ++ alternateHelper 3 xs ys z
+          | otherwise = z : alternateHelper 0 xs ys z
 
 ------------------------------------------------------------------------------
 -- Ex 6: Check if the length of a list is at least n. Make sure your
@@ -138,7 +138,7 @@ lengthAtLeast minSize xs = not (null (drop (minSize-1) xs))
 
 chunks :: Int -> [a] -> [[a]]
 chunks n [] = []
-chunks n (x:xs) = if lengthAtLeast n (x:xs) then [take n (x:xs)] ++ chunks n (xs) else []
+chunks n (x:xs) = if lengthAtLeast n (x:xs) then take n (x:xs) : chunks n xs else []
 
 ------------------------------------------------------------------------------
 -- Ex 8: Define a newtype called IgnoreCase, that wraps a value of
